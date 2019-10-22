@@ -181,8 +181,8 @@ export default class IsoSprite extends Sprite {
    * @method IsoSprite#preUpdate
    * @memberof IsoSprite
    */
-  preUpdate() {
-    Sprite.prototype.preUpdate.call(this);
+  preUpdate(time,delta) {
+    Sprite.prototype.preUpdate.call(this,time,delta);
 
     this._project();
   }

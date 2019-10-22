@@ -76,7 +76,7 @@ class Projector {
     out.x = (point3.x - point3.y) * this._transform[0];
     out.y = ((point3.x + point3.y) * this._transform[1]) - point3.z;
 
-    const { width, height } = this.scene.sys.game.config;
+    const { width, height } = this.scene.sys.game.canvas;
     out.x += width * this.origin.x;
     out.y += height * this.origin.y;
 
