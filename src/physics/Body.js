@@ -949,7 +949,7 @@ export default class Body {
     this.position.z = value;
   }
 
-  debugRender(context, color = 'rgba(0,255,0,0.4)', filled = true) {
+  debugRender(color = 'rgba(0,255,0,0.4)', filled = true) {
     var points = [];
     var corners = this.getCorners();
 
@@ -958,6 +958,8 @@ export default class Body {
 
     const pluginKey = this.scene.sys.settings.map.isoPlugin;
     const projector = this.scene[pluginKey].projector;
+
+    let context = this.scene.graphics;
 
     if (filled) {
       points = [corners[1], corners[3], corners[2], corners[6], corners[4], corners[5], corners[1]];
@@ -970,7 +972,7 @@ export default class Body {
       });
 
       context.beginPath();
-      context.fillStyle = color;
+      context.fillStyle(color);
       context.moveTo(points[0].x, points[0].y);
 
       for (var i = 1; i < points.length; i++) {
