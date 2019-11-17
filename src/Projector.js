@@ -94,14 +94,16 @@ class Projector {
     out.x = (point3.x - point3.y) * this._transform[0];
     out.y = (point3.x + point3.y) * this._transform[1];
 
-    out.x += this.game.world.width * this.origin.x;
-    out.y += this.game.world.height * this.origin.y;
+    const { width, height } = this.scene.sys.game.canvas;
+    out.x += width * this.origin.x;
+    out.y += height * this.origin.y;
 
     return out;
   }
 
   /**
-   * Use reverse axonometric projection to transform a 2D Point coordinate to a 3D Point3 coordinate. If given the coordinates will be set into the object, otherwise a brand new Point3 object will be created and returned.
+   * Use reverse axonometric projection to transform a 2D Point coordinate to a 3D Point3 coordinate. 
+   * If given the coordinates will be set into the object, otherwise a brand new Point3 object will be created and returned.
    * @method Projector#unproject
    * @param {Phaser.Geom.Point} point - The Point to project from.
    * @param {Point3} out - The Point3 to project to.
@@ -109,8 +111,15 @@ class Projector {
    * @return {Point3} The transformed Point3.
    */
   unproject(point, out = new Point3(), z = 0) {
-    const x = point.x - this.game.world.x - (this.game.world.width * this.origin.x);
-    const y = point.y - this.game.world.y - (this.game.world.height * this.origin.y) + z;
+    /*
+    3D to 2D isometric:
+
+    x'=(x-z)/sqrt(2)
+    y'=(x+2y+z)/sqrt(6)
+    */
+    const { width, height } = this.scene.sys.game.canvas;
+    const x = point.x - (width * this.origin.x);
+    const y = point.y - (height * this.origin.y) + z;
 
     out.x = x / (2 * this._transform[0]) + y / (2 * this._transform[1]);
     out.y = -(x / (2 * this._transform[0])) + y / (2 * this._transform[1]);

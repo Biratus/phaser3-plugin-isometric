@@ -405,13 +405,13 @@ export default class Body {
      * @private
      */
     this._corners = [new Point3(this.x, this.y, this.z),
-      new Point3(this.x, this.y, this.z + this.height),
-      new Point3(this.x, this.y + this.widthY, this.z),
-      new Point3(this.x, this.y + this.widthY, this.z + this.height),
-      new Point3(this.x + this.widthX, this.y, this.z),
-      new Point3(this.x + this.widthX, this.y, this.z + this.height),
-      new Point3(this.x + this.widthX, this.y + this.widthY, this.z),
-      new Point3(this.x + this.widthX, this.y + this.widthY, this.z + this.height)
+    new Point3(this.x, this.y, this.z + this.height),
+    new Point3(this.x, this.y + this.widthY, this.z),
+    new Point3(this.x, this.y + this.widthY, this.z + this.height),
+    new Point3(this.x + this.widthX, this.y, this.z),
+    new Point3(this.x + this.widthX, this.y, this.z + this.height),
+    new Point3(this.x + this.widthX, this.y + this.widthY, this.z),
+    new Point3(this.x + this.widthX, this.y + this.widthY, this.z + this.height)
     ];
   }
 
@@ -519,7 +519,7 @@ export default class Body {
         this.checkWorldBounds();
       }
 
-      if (this.sprite.outOfBoundsKill && !world.bounds.intersects(this.sprite.isoBounds)){
+      if (this.sprite.outOfBoundsKill && !world.bounds.intersects(this.sprite.isoBounds)) {
         this.sprite.kill();
       }
     }
@@ -550,13 +550,13 @@ export default class Body {
       this.prev.z = this.position.z;
     }
 
-    if (this.deltaAbsX() >= this.deltaAbsY() && this.deltaAbsX() >= this.deltaAbsZ()){
+    if (this.deltaAbsX() >= this.deltaAbsY() && this.deltaAbsX() >= this.deltaAbsZ()) {
       if (this.deltaX() < 0) {
         this.facing = BACKWARDX;
       } else if (this.deltaX() > 0) {
         this.facing = FORWARDX;
       }
-    } else if (this.deltaAbsY() >= this.deltaAbsX() && this.deltaAbsY() >= this.deltaAbsZ()){
+    } else if (this.deltaAbsY() >= this.deltaAbsX() && this.deltaAbsY() >= this.deltaAbsZ()) {
       if (this.deltaY() < 0) {
         this.facing = BACKWARDY;
       } else if (this.deltaY() > 0) {
@@ -720,9 +720,9 @@ export default class Body {
     this.angularVelocity = 0;
     this.angularAcceleration = 0;
 
-    this.position.x = x + ((this.widthX * -this.sprite.anchor.x) + this.widthX * 0.5) + this.offset.x;
-    this.position.y = y + ((this.widthY * this.sprite.anchor.x) - this.widthY * 0.5) + this.offset.y;
-    this.position.z = z - (Math.abs(this.sprite.height) * (1 - this.sprite.anchor.y)) + (Math.abs(this.sprite.width * 0.5)) + this.offset.z;
+    this.position.x = x + ((this.widthX * -this.sprite.originX) + this.widthX * 0.5) + this.offset.x;
+    this.position.y = y + ((this.widthY * this.sprite.originX) - this.widthY * 0.5) + this.offset.y;
+    this.position.z = z - (Math.abs(this.sprite.height) * (1 - this.sprite.originY)) + (Math.abs(this.sprite.width * 0.5)) + this.offset.z;
 
     this.prev.x = this.position.x;
     this.prev.y = this.position.y;
@@ -947,6 +947,57 @@ export default class Body {
 
   set z(value) {
     this.position.z = value;
+  }
+
+  resolveBounds() {
+    this.sprite.update();
+    this.update();
+    let x = 0;
+    for (x = 0; x < this.sprite.width; x++) {
+      if (this.sprite.texture.manager.getPixel(x, 0, this.sprite.texture.key).a > 0) break;
+    }
+    let o = {
+      x: (this.sprite.x - this.sprite.width * this.sprite.originX) + x,
+      y: this.sprite.y - this.sprite.height * this.sprite.originY
+    };
+    let p = this.scene.iso.projector.unproject(new Phaser.Geom.Point(o.x, o.y), undefined, this.top);
+    this.offset.x += p.x;
+    this.offset.y += p.y;
+    this.update();
+
+    let left = this.sprite.x - this.sprite.width * this.sprite.originX;
+    let right = this.sprite.x + this.sprite.width * this.sprite.originY;
+    let cnt = 0;
+    let jStep = 0.001;
+    let proj3d = this.proj3D();
+    // resolve widthX
+    // diff - abs(boxX - proj(isoX))
+    let jump = this.widthX;
+    while (Math.abs(right - proj3d.right.x) > jStep && cnt < 1000 && jump > jStep) {
+      cnt++;
+      proj3d = this.proj3D();
+      if (right - proj3d.right.x > jStep) this.widthX += jump;
+      else if (right - proj3d.right.x < jStep) this.widthX -= jump;
+      jump *= 0.5;
+    }
+    // resolve widthY
+    cnt = 0;
+    jump = this.widthY;
+    while (Math.abs(left - proj3d.left.x) > jStep && cnt < 1000 && jump > jStep) {
+      cnt++;
+      proj3d = this.proj3D();
+      if (left - proj3d.left.x > jStep) this.widthY -= jump;
+      else if (left - proj3d.left.x < jStep) this.widthY += jump;
+      jump *= 0.5;
+    }
+  }
+  proj3D() {
+    return {
+      left: this.scene.iso.projector.project(new Point3(this.position.x, this.frontY, this.top)),
+      right: this.scene.iso.projector.project(new Point3(this.frontX, this.position.y, this.top)),
+      top: this.scene.iso.projector.project(new Point3(this.position.x, this.position.y, this.top)),
+      bottom: this.scene.iso.projector.project(new Point3(this.frontX, this.frontY, this.z))
+    };
   }
 
   debugRender(color = 'rgba(0,255,0,0.4)', filled = true) {

@@ -118,9 +118,9 @@ export default class IsoPhysics {
     // Spherical polar coordinates
     var r = this.distanceToXYZ(displayObjectBody, x, y, z);
     var theta = Math.atan2(y - displayObjectBody.y, x - displayObjectBody.x);
-    var phi   = Math.acos((z - displayObjectBody.z)/ r);
+    var phi = Math.acos((z - displayObjectBody.z) / r);
 
-    return {r:r,theta:theta,phi:phi};
+    return { r: r, theta: theta, phi: phi };
   }
 
   /**
@@ -153,7 +153,7 @@ export default class IsoPhysics {
    * @return {Point3} - A Point where point.x contains the velocity x value and so on for y and z.
    */
   velocityFromAngles(theta, phi, speed) {
-    if (phi === undefined) { phi = Math.sin(Math.PI/2); }
+    if (phi === undefined) { phi = Math.sin(Math.PI / 2); }
     if (speed === undefined) { speed = 60; }
 
     return new Point3(
@@ -186,10 +186,10 @@ export default class IsoPhysics {
     if (ySpeedMax === undefined) { ySpeedMax = 500; }
     if (zSpeedMax === undefined) { zSpeedMax = 500; }
 
-    var a = this.anglesToXYZ(displayObject.body, x, y,z);
-    var v = this.velocityFromAngles(a.theta,a.phi,speed);
+    var a = this.anglesToXYZ(displayObject.body, x, y, z);
+    var v = this.velocityFromAngles(a.theta, a.phi, speed);
 
-    displayObject.body.acceleration.setTo(v.x,v.y,v.z);
+    displayObject.body.acceleration.setTo(v.x, v.y, v.z);
     displayObject.body.maxVelocity.setTo(xSpeedMax, ySpeedMax, zSpeedMax);
 
     return a.theta;
@@ -222,10 +222,10 @@ export default class IsoPhysics {
 
     if (maxTime > 0) {
       //  We know how many pixels we need to move, but how fast?
-      speed = this.distanceToXYZ(displayObject.body, x, y ,z) / (maxTime / 1000);
+      speed = this.distanceToXYZ(displayObject.body, x, y, z) / (maxTime / 1000);
     }
-    var a = this.anglesToXYZ(displayObject.body, x, y,z);
-    var v = this.velocityFromAngles(a.theta,a.phi,speed);
+    var a = this.anglesToXYZ(displayObject.body, x, y, z);
+    var v = this.velocityFromAngles(a.theta, a.phi, speed);
 
     displayObject.body.velocity.copyFrom(v);
 
@@ -267,7 +267,7 @@ export default class IsoPhysics {
    */
   moveToPointer(displayObject, speed, pointer, maxTime) {
     pointer = pointer || this.game.input.activePointer;
-    var isoPointer = this.game.iso.unproject(pointer.position,undefined,displayObject.body.z);
+    var isoPointer = this.game.iso.unproject(pointer.position, undefined, displayObject.body.z);
     isoPointer.z = displayObject.body.z;
 
     if (typeof speed === 'undefined') {
@@ -279,13 +279,13 @@ export default class IsoPhysics {
 
     if (maxTime > 0) {
       //  We know how many pixels we need to move, but how fast?
-      speed = this.distanceToXYZ(displayObject.body, isoPointer.x, isoPointer.y ,isoPointer.z) / (maxTime / 1000);
+      speed = this.distanceToXYZ(displayObject.body, isoPointer.x, isoPointer.y, isoPointer.z) / (maxTime / 1000);
     }
-    var a = this.anglesToXYZ(displayObject.body, isoPointer.x, isoPointer.y,isoPointer.z);
-    var v = this.velocityFromAngles(a.theta,a.phi,speed);
+    var a = this.anglesToXYZ(displayObject.body, isoPointer.x, isoPointer.y, isoPointer.z);
+    var v = this.velocityFromAngles(a.theta, a.phi, speed);
 
-    displayObject.body.velocity.x=v.x;
-    displayObject.body.velocity.y=v.y;
+    displayObject.body.velocity.x = v.x;
+    displayObject.body.velocity.y = v.y;
 
     return a.theta;
   }

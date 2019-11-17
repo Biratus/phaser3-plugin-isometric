@@ -5,7 +5,7 @@ import Octree from '../Octree';
 
 import { ISOSPRITE } from '../IsoSprite';
 
-const {  GameObjects, Structs } = Phaser;
+const { GameObjects, Structs } = Phaser;
 
 export default class World {
   constructor(scene) {

@@ -81,7 +81,7 @@ export default class IsoSprite extends Sprite {
   set isoX(value) {
     this._isoPosition.x = value;
     this._isoPositionChanged = this._isoBoundsChanged = true;
-    if (this.body){
+    if (this.body) {
       this.body._reset = true;
     }
   }
@@ -100,7 +100,7 @@ export default class IsoSprite extends Sprite {
     this._isoPosition.y = value;
     this._isoPositionChanged = this._isoBoundsChanged = true;
 
-    if (this.body){
+    if (this.body) {
       this.body._reset = true;
     }
   }
@@ -118,7 +118,7 @@ export default class IsoSprite extends Sprite {
   set isoZ(value) {
     this._isoPosition.z = value;
     this._isoPositionChanged = this._isoBoundsChanged = true;
-    if (this.body){
+    if (this.body) {
       this.body._reset = true;
     }
   }
@@ -181,8 +181,8 @@ export default class IsoSprite extends Sprite {
    * @method IsoSprite#preUpdate
    * @memberof IsoSprite
    */
-  preUpdate(time,delta) {
-    Sprite.prototype.preUpdate.call(this,time,delta);
+  preUpdate(time, delta) {
+    Sprite.prototype.preUpdate.call(this, time, delta);
 
     this._project();
   }
