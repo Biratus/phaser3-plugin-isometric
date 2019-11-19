@@ -959,7 +959,7 @@ export default class Body {
       if (this.sprite.texture.manager.getPixel(x, 0, this.sprite.texture.key).a > 0) break;
     }
     let o = {
-      x: (this.sprite.x - this.sprite.displayWidth * this.sprite.originX) + x * this.asx,
+      x: (this.sprite.x - this.sprite.displayWidth * this.sprite.originX) + x * this._sx,
       y: this.sprite.y - this.sprite.displayHeight * this.sprite.originY
     };
     let p = this.scene.iso.projector.unproject(new Phaser.Geom.Point(o.x, o.y), undefined, this.top);
