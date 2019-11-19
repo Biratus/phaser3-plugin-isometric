@@ -951,6 +951,7 @@ export default class Body {
   }
 
   resolveBounds() {
+    this.sprite.preUpdate();
     this.sprite.update();
     this.update();
     let x = 0;
@@ -958,16 +959,16 @@ export default class Body {
       if (this.sprite.texture.manager.getPixel(x, 0, this.sprite.texture.key).a > 0) break;
     }
     let o = {
-      x: (this.sprite.x - this.sprite.width * this.sprite.originX) + x,
-      y: this.sprite.y - this.sprite.height * this.sprite.originY
+      x: (this.sprite.x - this.sprite.displayWidth * this.sprite.originX) + x * this.asx,
+      y: this.sprite.y - this.sprite.displayHeight * this.sprite.originY
     };
     let p = this.scene.iso.projector.unproject(new Phaser.Geom.Point(o.x, o.y), undefined, this.top);
     this.offset.x += p.x;
     this.offset.y += p.y;
     this.update();
 
-    let left = this.sprite.x - this.sprite.width * this.sprite.originX;
-    let right = this.sprite.x + this.sprite.width * this.sprite.originY;
+    let left = this.sprite.x - this.sprite.displayWidth * this.sprite.originX;
+    let right = this.sprite.x + this.sprite.displayWidth * this.sprite.originX;
     let cnt = 0;
     let jStep = 0.001;
     let proj3d = this.proj3D();
