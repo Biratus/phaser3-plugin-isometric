@@ -98,17 +98,17 @@ export default class Body {
     /**
      * @property {number} widthX - The calculated X width (breadth) of the physics body.
      */
-    this.widthX = Math.ceil(sprite.width * 0.5);
+    this.widthX = Math.ceil(sprite.width * 0.5) * this.sprite.scaleX;
 
     /**
      * @property {number} widthY - The calculated Y width (depth) of the physics body.
      */
-    this.widthY = Math.ceil(sprite.width * 0.5);
+    this.widthY = Math.ceil(sprite.width * 0.5) * this.sprite.scaleX;
 
     /**
      * @property {number} height - The calculated height of the physics body.
      */
-    this.height = sprite.height - Math.ceil(sprite.width * 0.5);
+    this.height = (sprite.height - Math.ceil(sprite.width * 0.5)) * this.sprite.scaleY;
 
     /**
      * @property {number} halfWidthX - The calculated X width / 2 of the physics body.
@@ -426,9 +426,9 @@ export default class Body {
     var asy = Math.abs(this.sprite.scaleY);
 
     if (asx !== this._sx || asy !== this._sy) {
-      this.widthX = Math.ceil(this.sprite.width * 0.5);
-      this.widthY = Math.ceil(this.sprite.width * 0.5);
-      this.height = Math.ceil(this.sprite.height - (this.sprite.width * 0.5));
+      this.widthX = Math.ceil(this.sprite.width * 0.5) * asx;
+      this.widthY = Math.ceil(this.sprite.width * 0.5) * asx;
+      this.height = Math.ceil(this.sprite.height - (this.sprite.width * 0.5)) * asy;
       this.halfWidthX = Math.floor(this.widthX * 0.5);
       this.halfWidthY = Math.floor(this.widthY * 0.5);
       this.halfHeight = Math.floor(this.height * 0.5);
@@ -438,6 +438,7 @@ export default class Body {
 
       this._reset = true;
     }
+
   }
 
   /**
@@ -482,7 +483,7 @@ export default class Body {
     //  Working out how to incorporate anchors into this was... fun.
     this.position.x = this.sprite.isoX + ((this.widthX * -this.sprite.originX) + this.widthX * 0.5) + this.offset.x;
     this.position.y = this.sprite.isoY + ((this.widthY * this.sprite.originX) - this.widthY * 0.5) + this.offset.y;
-    this.position.z = this.sprite.isoZ - (Math.abs(this.sprite.height) * (1 - this.sprite.originY)) + (Math.abs(this.sprite.width * 0.5)) + this.offset.z;
+    this.position.z = this.sprite.isoZ - (Math.abs(this.sprite.displayHeight) * (1 - this.sprite.originY)) + (Math.abs(this.sprite.displayWidth * 0.5)) + this.offset.z;
 
 
     this.rotation = this.sprite.angle;
@@ -722,7 +723,7 @@ export default class Body {
 
     this.position.x = x + ((this.widthX * -this.sprite.originX) + this.widthX * 0.5) + this.offset.x;
     this.position.y = y + ((this.widthY * this.sprite.originX) - this.widthY * 0.5) + this.offset.y;
-    this.position.z = z - (Math.abs(this.sprite.height) * (1 - this.sprite.originY)) + (Math.abs(this.sprite.width * 0.5)) + this.offset.z;
+    this.position.z = z - (Math.abs(this.sprite.displayHeight) * (1 - this.sprite.originY)) + (Math.abs(this.sprite.displayWidth * 0.5)) + this.offset.z;
 
     this.prev.x = this.position.x;
     this.prev.y = this.position.y;
